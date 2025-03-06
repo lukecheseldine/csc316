@@ -66,3 +66,7 @@ coverage/
 # Misc
 .sass-cache/
 .eslintcache
+
+
+# Data
+data.py

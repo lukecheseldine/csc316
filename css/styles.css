@@ -1,0 +1,67 @@
+body {
+    background-color: #f8f9fa;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    border: none;
+}
+
+.card-header {
+    background-color: #f1f8ff;
+    border-bottom: 1px solid #e3f2fd;
+    border-radius: 10px 10px 0 0 !important;
+    padding: 15px;
+}
+
+.form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+#visualization-container {
+    width: 100%;
+    height: 500px;
+    margin: 0 auto;
+}
+
+.box {
+    fill: #69b3a2;
+    opacity: 0.7;
+}
+
+.box-line {
+    stroke: #000;
+    stroke-width: 2px;
+}
+
+.median-line {
+    stroke: #000000;
+    stroke-width: 2px;
+}
+
+.whisker {
+    stroke: #000;
+    stroke-width: 1px;
+}
+
+.your-spending {
+    fill: #ff7f0e;
+    stroke: #ff6600;
+    stroke-width: 2px;
+}
+
+.axis text {
+    font-size: 12px;
+}
+
+.axis-label {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.legend-item {
+    font-size: 12px;
+}

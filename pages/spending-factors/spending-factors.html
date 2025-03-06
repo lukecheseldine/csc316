@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Factors Affecting Discretionary Spending</title>
+        <!-- Bootstrap CSS -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+        />
+        <!-- Bootstrap Icons -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+        />
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="../../css/styles.css" />
+        <style>
+            .fade-in {
+                opacity: 0;
+                transition: opacity 1s ease-in-out;
+            }
+
+            .fade-in.visible {
+                opacity: 1;
+            }
+
+            .factors-container {
+                min-height: 300px;
+            }
+
+            .continue-text {
+                margin-top: 40px;
+            }
+
+            .card.visited {
+                background-color: #f8f9ff;
+                border: 1px solid #e3f2fd;
+                box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+            }
+
+            .card {
+                position: relative;
+                transition: all 0.3s ease;
+            }
+
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-10">
+                    <div class="card">
+                        <div class="card-header text-center">
+                            <h2>Understanding Discretionary Spending</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                                    <h3 class="mb-4">
+                                        Discretionary spending depends on a
+                                        variety of factors:
+                                    </h3>
+
+                                    <div class="factors-container">
+                                        <div
+                                            class="row row-cols-1 row-cols-md-2 g-4"
+                                        >
+                                            <div class="col">
+                                                <div
+                                                    class="fade-in"
+                                                    id="factor1"
+                                                >
+                                                    <a
+                                                        href="../factor-income/factor-income.html"
+                                                        class="text-decoration-none"
+                                                    >
+                                                        <div
+                                                            class="card h-100 text-center p-3"
+                                                        >
+                                                            <i
+                                                                class="bi bi-cash-stack fs-1 mb-2"
+                                                            ></i>
+                                                            <h5>Income</h5>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div
+                                                    class="fade-in"
+                                                    id="factor2"
+                                                >
+                                                    <a
+                                                        href="../factor-year-of-study/factor-year-of-study.html"
+                                                        class="text-decoration-none"
+                                                    >
+                                                        <div
+                                                            class="card h-100 text-center p-3"
+                                                        >
+                                                            <i
+                                                                class="bi bi-mortarboard fs-1 mb-2"
+                                                            ></i>
+                                                            <h5>
+                                                                Year of Study
+                                                            </h5>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div
+                                                    class="fade-in"
+                                                    id="factor3"
+                                                >
+                                                    <a
+                                                        href="../factor-gender/factor-gender.html"
+                                                        class="text-decoration-none"
+                                                    >
+                                                        <div
+                                                            class="card h-100 text-center p-3"
+                                                        >
+                                                            <i
+                                                                class="bi bi-gender-ambiguous fs-1 mb-2"
+                                                            ></i>
+                                                            <h5>Gender</h5>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div
+                                                    class="fade-in"
+                                                    id="factor4"
+                                                >
+                                                    <a
+                                                        href="../factor-major/factor-major.html"
+                                                        class="text-decoration-none"
+                                                    >
+                                                        <div
+                                                            class="card h-100 text-center p-3"
+                                                        >
+                                                            <i
+                                                                class="bi bi-book fs-1 mb-2"
+                                                            ></i>
+                                                            <h5>Major</h5>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="continue-text fade-in"
+                                        id="continue"
+                                    >
+                                        <h4>
+                                            Click on a factor above to see how
+                                            it affects discretionary spending
+                                        </h4>
+                                        <a
+                                            href="../your-discretionary-spending/your-discretionary-spending.html"
+                                            class="btn btn-primary mt-3"
+                                            >Skip to Your Spending</a
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bootstrap JS Bundle with Popper -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Custom JS -->
+        <script src="spending-factors.js"></script>
+    </body>
+</html>

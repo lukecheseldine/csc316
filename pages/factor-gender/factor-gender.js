@@ -16,4 +16,4 @@ function loadDataAndDisplayResults() {
         });
 }
 
-document.addEventListener("DOMContentLoaded", loadDataAndDisplayResults); 
+document.addEventListener("DOMContentLoaded", loadDataAndDisplayResults);

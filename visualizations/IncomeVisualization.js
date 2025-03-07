@@ -103,7 +103,6 @@ class IncomeVisualization extends BaseVisualization {
             .attr("stroke-dasharray", "5,5")
             .attr("d", line);
 
-        // Add legend - moved further right to avoid overlap
         const legend = svg
             .append("g")
             .attr("transform", `translate(${this.width - 120}, 20)`);

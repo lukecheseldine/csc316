@@ -1,214 +1,238 @@
 class GenderVisualization extends BaseVisualization {
-    render() {
+    constructor(container, data) {
+        super(container, data);
+        this.categories = [
+            { id: 'entertainment', label: 'Entertainment', color: '#ff7f0e' },
+            { id: 'personal_care', label: 'Personal Care', color: '#2ca02c' },
+            { id: 'miscellaneous', label: 'Miscellaneous', color: '#1f77b4' }
+        ];
+        this.genders = ['Male', 'Female', 'Non-binary'];
+    }
+
+    render(highlightedCategories = [], showPercentage = false) {
+        // Clear previous content
+        d3.select(this.container).selectAll("*").remove();
+
+        // Increase right margin to accommodate legend
+        this.margin = { top: 20, right: 120, bottom: 50, left: 60 };
         const svg = this.createSvg();
 
-        svg.append('text')
-            .attr('x', this.width / 2)
-            .attr('y', 15)
-            .attr('text-anchor', 'middle')
-            .style('font-size', '18px')
-            .style('font-weight', 'bold')
-            .text('Student Spending Patterns by Gender');
+        // No titles - these are already on the page
 
-        svg.append('text')
-            .attr('x', this.width / 2)
-            .attr('y', 35)
-            .attr('text-anchor', 'middle')
-            .style('font-size', '13px')
-            .text('Visualizing average monthly spending by category for male and female students. Larger bubbles indicate higher spending.');
-
-        const categories = [
-            'Housing', 'Food', 'Transportation', 'Books & Supplies',
-            'Entertainment', 'Personal Care', 'Technology',
-            'Health & Wellness', 'Miscellaneous'
-        ];
-        const genders = ['Male', 'Female', 'Non-binary'];
-
+        // Calculate gender averages
         const genderAverages = d3.rollup(this.data,
-            v => categories.reduce((acc, category) => {
-                const dataKey = category.toLowerCase()
-                    .replace(/&/g, '')
-                    .replace(/\s+/g, '_')
-                    .replace(/_+/g, '_')
-                    .trim();
-                acc[dataKey] = d3.mean(v, d => +d[dataKey]);
-                return acc;
-            }, {
-                total: d3.mean(v, d => categories.reduce((sum, category) => {
-                    const dataKey = category.toLowerCase()
-                        .replace(/&/g, '')
-                        .replace(/\s+/g, '_')
-                        .replace(/_+/g, '_')
-                        .trim();
-                    return sum + +d[dataKey];
-                }, 0))
-            }),
+            v => {
+                const result = {};
+                // Calculate category values
+                this.categories.forEach(cat => {
+                    result[cat.id] = d3.mean(v, d => +d[cat.id]);
+                });
+
+                // Calculate total
+                result.total = this.categories.reduce((sum, cat) => sum + result[cat.id], 0);
+
+                return result;
+            },
             d => d.gender
         );
 
-        const bubbleData = genders.flatMap((gender, i) => {
-            const data = genderAverages.get(gender);
-            return categories.map((category, j) => {
-                const dataKey = category.toLowerCase()
-                    .replace(/&/g, '')
-                    .replace(/\s+/g, '_')
-                    .replace(/_+/g, '_')
-                    .trim();
-                return {
-                    gender,
-                    category,
-                    value: data[dataKey],
-                    total: data.total,
-                    x: (i * (this.width / 3)) + (this.width / 6),
-                    y: this.height / 2 + (j * 20 - categories.length * 10)
-                };
-            });
+        // Prepare data for visualization
+        const plotData = [];
+
+        this.genders.forEach(gender => {
+            if (genderAverages.has(gender)) {
+                const genderData = genderAverages.get(gender);
+
+                this.categories.forEach(category => {
+                    // If showing percentages, convert to percent of total
+                    const value = showPercentage ?
+                        (genderData[category.id] / genderData.total) * 100 :
+                        genderData[category.id];
+
+                    plotData.push({
+                        gender: gender,
+                        category: category.id,
+                        categoryLabel: category.label,
+                        value: value,
+                        color: category.color,
+                        highlight: highlightedCategories.includes(category.id)
+                    });
+                });
+            }
         });
 
-        const maxValue = d3.max(bubbleData, d => d.value);
-        const radiusScale = d3.scaleSqrt()
-            .domain([0, maxValue])
-            .range([8, 35]);
+        // Create scales with more padding
+        const xScale = d3.scaleBand()
+            .domain(this.genders)
+            .range([0, this.width])
+            .padding(0.3);
 
-        const colors = {
-            'Housing': '#e53935',
-            'Food': '#43a047',
-            'Transportation': '#1976d2',
-            'Books & Supplies': '#fbc02d',
-            'Entertainment': '#ff7f0e',
-            'Personal Care': '#8e24aa',
-            'Technology': '#00897b',
-            'Health & Wellness': '#d81b60',
-            'Miscellaneous': '#795548'
-        };
+        const categoryScale = d3.scaleBand()
+            .domain(this.categories.map(c => c.id))
+            .range([0, xScale.bandwidth()])
+            .padding(0.1);
 
-        const simulation = d3.forceSimulation(bubbleData)
-            .force('x', d3.forceX(d => d.x).strength(0.2))
-            .force('y', d3.forceY(d => d.y).strength(0.2))
-            .force('collide', d3.forceCollide(d => radiusScale(d.value) + 3).strength(0.8))
-            .force('charge', d3.forceManyBody().strength(-10));
+        const maxValue = showPercentage ? 100 : d3.max(plotData, d => d.value);
 
-        simulation.tick(300);
+        const yScale = d3.scaleLinear()
+            .domain([0, maxValue * 1.1])
+            .range([this.height, 0]);
 
-        const genderGroups = svg.selectAll('.gender-group')
-            .data(genders)
-            .join('g')
-            .attr('class', 'gender-group');
+        // Add axes
+        svg.append("g")
+            .attr("transform", `translate(0,${this.height})`)
+            .call(d3.axisBottom(xScale));
 
-        genderGroups.append('text')
-            .attr('x', (d, i) => (i * (this.width / 3)) + (this.width / 6))
-            .attr('y', 50)
-            .attr('text-anchor', 'middle')
-            .style('font-size', '14px')
-            .style('font-weight', 'bold')
-            .text(d => d);
+        svg.append("g")
+            .call(d3.axisLeft(yScale)
+                .ticks(5)
+                .tickFormat(d => showPercentage ? `${d}%` : `$${d}`));
 
-        const bubbles = svg.selectAll('.bubble')
-            .data(bubbleData)
-            .join('g')
-            .attr('class', 'bubble');
+        // Add axis labels
+        svg.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", -40)
+            .attr("x", -this.height / 2)
+            .attr("text-anchor", "middle")
+            .style("font-size", "12px")
+            .text(showPercentage ? "Percentage of Total Spending" : "Average Spending ($)");
 
-        bubbles.append('circle')
-            .attr('cx', d => d.x)
-            .attr('cy', d => d.y)
-            .attr('r', d => radiusScale(d.value))
-            .style('fill', d => colors[d.category])
-            .style('stroke', '#fff')
-            .style('stroke-width', 1)
-            .style('cursor', 'pointer')
-            .on('mouseover', function (event, d) {
+        // Create gender groups
+        const genderGroups = svg.selectAll(".gender-group")
+            .data(this.genders)
+            .join("g")
+            .attr("class", "gender-group")
+            .attr("transform", d => `translate(${xScale(d)},0)`);
+
+        // Add bars with animations and proper styling
+        genderGroups.selectAll("rect.bar")
+            .data(d => plotData.filter(item => item.gender === d))
+            .join("rect")
+            .attr("class", "bar")
+            .attr("x", d => categoryScale(d.category))
+            .attr("y", this.height) // Start at baseline for animation
+            .attr("width", categoryScale.bandwidth())
+            .attr("height", 0) // Start with height 0 for animation
+            .attr("fill", d => d.color)
+            .attr("opacity", d => d.highlight || highlightedCategories.length === 0 ? 1 : 0.4)
+            .attr("stroke", d => d.highlight ? "black" : "none")
+            .attr("stroke-width", d => d.highlight ? 2 : 0)
+            .transition()
+            .duration(1000)
+            .attr("y", d => yScale(d.value))
+            .attr("height", d => this.height - yScale(d.value));
+
+        // Add value labels with better positioning
+        genderGroups.selectAll(".value-label")
+            .data(d => plotData.filter(item => item.gender === d))
+            .join("text")
+            .attr("class", "value-label")
+            .attr("x", d => categoryScale(d.category) + categoryScale.bandwidth() / 2)
+            .attr("y", d => yScale(d.value) - 5)
+            .attr("text-anchor", "middle")
+            .attr("font-size", "10px")
+            .attr("opacity", 0) // Start invisible for animation
+            .text(d => showPercentage ?
+                `${d.value.toFixed(1)}%` :
+                `$${Math.round(d.value)}`)
+            .transition()
+            .delay(1000) // Wait for bars to finish
+            .duration(500)
+            .attr("opacity", 1);
+
+        // Add hover effects with fixed tooltip position
+        genderGroups.selectAll("rect.bar")
+            .on("mouseover", function (event, d) {
+                // Clear any existing tooltips first
+                svg.selectAll(".tooltip-bg, .tooltip-text").remove();
+
                 d3.select(this)
-                    .style('stroke', '#000')
-                    .style('stroke-width', 2);
-
-                tooltip.transition()
+                    .transition()
                     .duration(200)
-                    .style("opacity", 0.9);
+                    .attr("opacity", 1)
+                    .attr("stroke", "black")
+                    .attr("stroke-width", 2);
 
-                tooltip.html(`
-                    <strong>${d.gender}</strong><br/>
-                    <strong>${d.category}:</strong> $${Math.round(d.value)}<br/>
-                    <em>Click for more details</em>
-                `)
-                    .style("left", (event.pageX + 10) + "px")
-                    .style("top", (event.pageY - 28) + "px");
+                // Get bar position for fixed tooltip (not mouse position)
+                const barX = parseFloat(d3.select(this).attr("x"));
+                const barY = parseFloat(d3.select(this).attr("y"));
+                const barWidth = parseFloat(d3.select(this).attr("width"));
+
+                // Position tooltip above the bar
+                const tooltipX = xScale(d.gender) + barX + barWidth / 2;
+                const tooltipY = barY - 10;
+
+                // Tooltip background
+                svg.append("rect")
+                    .attr("class", "tooltip-bg")
+                    .attr("x", tooltipX - 60)
+                    .attr("y", tooltipY - 35)
+                    .attr("width", 120)
+                    .attr("height", 35)
+                    .attr("fill", "white")
+                    .attr("stroke", d.color)
+                    .attr("rx", 5);
+
+                // Tooltip text
+                svg.append("text")
+                    .attr("class", "tooltip-text")
+                    .attr("x", tooltipX)
+                    .attr("y", tooltipY - 20)
+                    .attr("text-anchor", "middle")
+                    .style("font-size", "12px")
+                    .text(`${d.gender}: ${showPercentage ?
+                        d.value.toFixed(1) + '%' :
+                        '$' + Math.round(d.value)}`);
+
+                // Additional info line
+                svg.append("text")
+                    .attr("class", "tooltip-text")
+                    .attr("x", tooltipX)
+                    .attr("y", tooltipY - 5)
+                    .attr("text-anchor", "middle")
+                    .style("font-size", "11px")
+                    .text(d.categoryLabel);
             })
-            .on('mouseout', function () {
+            .on("mouseout", function () {
+                const d = d3.select(this).datum();
                 d3.select(this)
-                    .style('stroke', '#fff')
-                    .style('stroke-width', 1);
+                    .transition()
+                    .duration(200)
+                    .attr("opacity", d.highlight || highlightedCategories.length === 0 ? 1 : 0.4)
+                    .attr("stroke", d.highlight ? "black" : "none")
+                    .attr("stroke-width", d.highlight ? 2 : 0);
 
-                tooltip.transition()
-                    .duration(500)
-                    .style("opacity", 0);
-            })
-            .on('click', function (event, d) {
-                tooltip.html(`
-                    <strong>${d.gender}</strong><br/>
-                    <strong>${d.category}:</strong> $${Math.round(d.value)}<br/>
-                    <hr style="margin: 5px 0"/>
-                    <strong>Percentage of total:</strong> ${Math.round((d.value / d.total) * 100)}%<br/>
-                    <strong>Rank between genders:</strong> ${getRankForCategory(d.category, d.gender, bubbleData)}
-                `)
-                    .style("left", (event.pageX + 10) + "px")
-                    .style("top", (event.pageY - 28) + "px");
+                svg.selectAll(".tooltip-bg, .tooltip-text").remove();
             });
 
-        // Helper function to get rank between genders for a specific category
-        function getRankForCategory(category, gender, data) {
-            const categoryData = data.filter(d => d.category === category)
-                .sort((a, b) => b.value - a.value);
-
-            const rank = categoryData.findIndex(d => d.gender === gender) + 1;
-            return `${rank} of ${genders.length}`;
-        }
-
-        // Add tooltip div (add this near the start of render method, before creating bubbles)
-        const tooltip = d3.select("body").append("div")
-            .attr("class", "tooltip")
-            .style("opacity", 0)
+        // Add legend with PROPER EVEN SPACING
+        // Create floating legend with consistent padding
+        const legendPanel = d3.select(this.container)
+            .append("div")
             .style("position", "absolute")
+            .style("top", "20px")
+            .style("right", "20px")
             .style("background-color", "white")
             .style("border", "1px solid #ddd")
-            .style("border-radius", "4px")
-            .style("padding", "8px")
-            .style("box-shadow", "0 2px 4px rgba(0,0,0,0.1)")
-            .style("pointer-events", "none")
-            .style("font-size", "12px");
+            .style("border-radius", "5px")
+            .style("padding", "10px")
+            .style("box-shadow", "0 1px 3px rgba(0,0,0,0.1)");
 
-        bubbles.append('text')
-            .attr('x', d => d.x)
-            .attr('y', d => d.y)
-            .attr('text-anchor', 'middle')
-            .attr('dy', '.3em')
-            .style('font-size', '10px')
-            .style('fill', '#fff')
-            .text(d => d.category.split(' ')[0].charAt(0));
+        this.categories.forEach((category, i) => {
+            const legendRow = legendPanel.append("div")
+                .style("display", "flex")
+                .style("align-items", "center")
+                .style("margin-bottom", i < this.categories.length - 1 ? "8px" : "0");
 
-        // Add legend at the bottom
-        const legendRowItems = 5;
-        const itemWidth = 160;
-        const rowHeight = 25;
+            legendRow.append("div")
+                .style("width", "15px")
+                .style("height", "15px")
+                .style("background-color", category.color)
+                .style("margin-right", "8px");
 
-        const legend = svg.append('g')
-            .attr('transform', `translate(${(this.width - (legendRowItems * itemWidth)) / 2}, ${this.height - 70})`);
-
-        categories.forEach((category, i) => {
-            const row = Math.floor(i / legendRowItems);
-            const col = i % legendRowItems;
-
-            const legendItem = legend.append('g')
-                .attr('transform', `translate(${col * itemWidth}, ${row * rowHeight})`);
-
-            legendItem.append('circle')
-                .attr('r', 6)
-                .attr('fill', colors[category]);
-
-            legendItem.append('text')
-                .attr('x', 12)
-                .attr('y', 4)
-                .style('font-size', '12px')
-                .text(category);
+            legendRow.append("div")
+                .text(category.label)
+                .style("font-size", "12px");
         });
     }
 }

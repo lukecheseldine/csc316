@@ -22,20 +22,49 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-12">
-                                <div id="visualization-container"></div>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-center">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="highlight-entertainment"
+                                            value="entertainment">
+                                        <label class="form-check-label" for="highlight-entertainment">Highlight
+                                            Entertainment</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="highlight-personal_care"
+                                            value="personal_care">
+                                        <label class="form-check-label" for="highlight-personal_care">Highlight
+                                            Personal Care</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="highlight-miscellaneous"
+                                            value="miscellaneous">
+                                        <label class="form-check-label" for="highlight-miscellaneous">Highlight
+                                            Miscellaneous</label>
+                                    </div>
+                                </div>
+                                <div class="mt-2 d-flex justify-content-center">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="show-percentage"
+                                            value="percentage">
+                                        <label class="form-check-label" for="show-percentage">Show as Percentage of
+                                            Total</label>
+                                    </div>
+                                </div>
                             </div>
+                            <div id="visualization-container"></div>
                         </div>
-                        <div class="row mt-4">
-                            <div class="col-md-12 text-center">
-                                <a href="../spending-factors/spending-factors.html" class="btn btn-secondary">Back to
-                                    Factors</a>
-                            </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-md-12 text-center">
+                            <a href="../spending-factors/spending-factors.html" class="btn btn-secondary">Back to
+                                Factors</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 
     <!-- Bootstrap JS Bundle with Popper -->

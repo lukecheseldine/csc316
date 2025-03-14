@@ -1,96 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Student Spending Comparison</title>
+        <!-- Bootstrap CSS -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+        />
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="../../css/styles.css" />
+    </head>
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Student Spending Comparison</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="../../css/styles.css" />
-</head>
+    <body>
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header text-center">
+                            <h2>Compare Your Monthly Spending</h2>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-center lead">
+                                Input your monthly spending below to find out
+                                how you compare!
+                            </p>
 
-<body>
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header text-center">
-                        <h2>Compare Your Spending</h2>
+                            <form id="spending-form">
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="entertainment"
+                                                >Entertainment ($)</label
+                                            >
+                                            <input
+                                                type="number"
+                                                class="form-control"
+                                                id="entertainment"
+                                                min="0"
+                                                step="1"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="personal-care"
+                                                >Personal Care ($)</label
+                                            >
+                                            <input
+                                                type="number"
+                                                class="form-control"
+                                                id="personal-care"
+                                                min="0"
+                                                step="1"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="miscellaneous"
+                                                >Miscellaneous ($)</label
+                                            >
+                                            <input
+                                                type="number"
+                                                class="form-control"
+                                                id="miscellaneous"
+                                                min="0"
+                                                step="1"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <button
+                                        type="submit"
+                                        class="btn btn-primary"
+                                    >
+                                        Compare My Spending
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <p class="text-center lead">
-                            Input your spending below to find out how you
-                            compare!
-                        </p>
+                </div>
+            </div>
 
-                        <form id="spending-form">
-                            <div class="row mb-3">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="entertainment">Entertainment ($)</label>
-                                        <input type="number" class="form-control" id="entertainment" min="0" step="1"
-                                            required />
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="personal-care">Personal Care ($)</label>
-                                        <input type="number" class="form-control" id="personal-care" min="0" step="1"
-                                            required />
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="miscellaneous">Miscellaneous ($)</label>
-                                        <input type="number" class="form-control" id="miscellaneous" min="0" step="1"
-                                            required />
-                                    </div>
+            <div class="row mt-4 justify-content-center">
+                <div class="col-md-10">
+                    <div id="results" class="card d-none">
+                        <div class="card-header">
+                            <h3 class="text-center">
+                                Your Monthly Spending Comparison
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div id="visualization-container"></div>
                                 </div>
                             </div>
-                            <div class="text-center">
-                                <button type="submit" class="btn btn-primary">
-                                    Compare My Spending
-                                </button>
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <div id="summary" class="text-center"></div>
+                                </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row mt-4 justify-content-center">
-            <div class="col-md-10">
-                <div id="results" class="card d-none">
-                    <div class="card-header">
-                        <h3 class="text-center">
-                            Your Spending Comparison
-                        </h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div id="visualization-container"></div>
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-md-12">
-                                <div id="summary" class="text-center"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bootstrap JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- D3.js -->
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <!-- Custom JS -->
-    <script src="index.js"></script>
-</body>
-
+        <!-- Bootstrap JS Bundle with Popper -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- D3.js -->
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+        <!-- Custom JS -->
+        <script src="index.js"></script>
+    </body>
 </html>

@@ -79,6 +79,36 @@ class RadarVisualization extends BaseVisualization {
     this.showAverage = show;
   }
 
+  /**
+   * Format category names into human-readable labels
+   */
+  formatCategoryName(category) {
+    // Provide more human-readable and descriptive category names
+    const categoryMapping = {
+      entertainment: "Entertainment & Leisure",
+      personal_care: "Personal Care & Grooming",
+      miscellaneous: "Miscellaneous Expenses",
+      food: "Food & Dining",
+      transportation: "Transportation",
+      books_supplies: "Books & Academic Supplies",
+      technology: "Technology",
+      health_wellness: "Health & Wellness",
+      housing: "Housing & Accommodation",
+      tuition: "Tuition & Fees",
+    };
+
+    // Return the mapped category name if it exists, otherwise use the default formatting
+    if (categoryMapping[category]) {
+      return categoryMapping[category];
+    }
+
+    // Default formatting (fallback): Convert category name to title case and replace underscores with spaces
+    return category
+      .split("_")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  }
+
   // Helper function to format currency values
   formatCurrency(value) {
     return new Intl.NumberFormat("en-US", {
@@ -338,7 +368,8 @@ class RadarVisualization extends BaseVisualization {
         .attr("y", y2 * 1.1)
         .attr("text-anchor", "middle")
         .attr("dominant-baseline", "middle")
-        .text(cat);
+        .text(this.formatCategoryName(cat))
+        .style("font-size", "10px");
     });
 
     // Optional radial "grid" circles
@@ -387,7 +418,12 @@ class RadarVisualization extends BaseVisualization {
             .html(
               `<strong>${label} Spending</strong><br/>` +
                 series
-                  .map((d) => `${d.category}: ${this.formatCurrency(d.value)}`)
+                  .map(
+                    (d) =>
+                      `${this.formatCategoryName(
+                        d.category
+                      )}: ${this.formatCurrency(d.value)}`
+                  )
                   .join("<br/>")
             )
             .style("left", event.clientX + 10 + "px")
@@ -426,9 +462,9 @@ class RadarVisualization extends BaseVisualization {
           this.tooltip
             .style("opacity", 1)
             .html(
-              `<strong>${label}</strong><br/>${
+              `<strong>${label}</strong><br/>${this.formatCategoryName(
                 d.category
-              }: ${this.formatCurrency(d.value)}`
+              )}: ${this.formatCurrency(d.value)}`
             )
             .style("left", event.clientX + 10 + "px")
             .style("top", event.clientY + 10 + "px");

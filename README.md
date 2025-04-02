@@ -1,6 +1,6 @@
 # Overview
 
-This web application provides an interactive visualization of student spending patterns using radar charts. It allows users to compare their personal expenditures against aggregated student spending data across various categories such as housing, food, entertainment, and more. Users can filter the visualization by demographic factors to gain insights into spending habits among different student populations.
+This web application provides an interactive visualization of student spending patterns. It allows users to compare their personal expenditures against aggregated student spending data across various categories such as housing, food, entertainment, and more. Users can filter the visualization by demographic factors to gain insights into spending habits among different student populations.
 
 # Features
 
